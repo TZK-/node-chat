@@ -36,20 +36,31 @@ async function subscribeToChannel(socket, channel, userId) {
     }
 
     // Add userId in redis channel
-    const channelName = 'channel_' + channel;
-    const users = JSON.parse(await get(channelName) || "[]");
-    users.push(userId);
+    const channelName = "channel_" + channel;
 
-    await set(channelName, JSON.stringify(users));
-    const username = await get('client_' + userId);
+    // TODO: return null all the time. Why The fuck ?
+    const users = JSON.parse(await get(channelName));
 
-    broadcast(channel, JSON.stringify({
-        channel: channel,
-        type: 'connected',
-        payload: {
-            username: username
-        }
-    }));
+    if (!users.find(id => id == userId)) {
+        users.push(userId);
+        await set(channelName, JSON.stringify(users));
+        const username = getUsernameFromId(userId);
+
+        broadcast(
+            channel,
+            JSON.stringify({
+                channel: channel,
+                type: "connected",
+                payload: {
+                    username: username
+                }
+            })
+        );
+    }
+}
+
+async function getUsernameFromId(userId) {
+    return await get("client_" + userId);
 }
 
 async function unsubscribeFromChannel(socket, channel, userId) {
@@ -68,7 +79,7 @@ async function unsubscribeFromChannel(socket, channel, userId) {
 
     if (userId !== undefined) {
         // Remove userId in redis channel
-        const channelName = 'channel_' + channel;
+        const channelName = "channel_" + channel;
         const users = JSON.parseJSON(await get(channelName));
         const usersWithoutUnsubscriber = users.filter(user => user != userId);
 
@@ -81,11 +92,12 @@ async function unsubscribeFromAllChannel(socket) {
 
     channelSubscribed.forEach(async channel => {
         unsubscribeFromChannel(socket, channel);
-        await del('channel_' + channel);
+        await del("channel_" + channel);
     });
 }
 
 async function broadcast(channel, data) {
+    data.username = getUsernameFromId(data.user_id);
     redisPublisher.publish(channel, data);
 
     while ((await llen(channel)) >= config.message_to_keep) {

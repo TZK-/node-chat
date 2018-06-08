@@ -5,7 +5,7 @@ const websocket = new WebSocket(
     "protocolOne"
 );
 
-const $chat = $(".chat-history");
+const $chat = $("#chat-history");
 const $messageTemplate = $("#message_template");
 const $connectedUserTemplate = $("#connected_user_template");
 const $chatFeedback = $(".chat-feedback");
@@ -41,13 +41,13 @@ websocket.addEventListener("open", () => {
 
 websocket.addEventListener("message", event => {
     const message = JSON.parse(event.data);
+    console.log("Received", message);
 
     if (message.channel != CURRENT_CHANNEL) {
         throw new Error("User not allowed to send message in this channel");
         return;
     }
 
-    console.log("Received", message);
 
     switch (message.type) {
         case "message":
