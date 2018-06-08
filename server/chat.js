@@ -56,6 +56,16 @@ async function subscribeToChannel(socket, channel, userId) {
             user_id: userId
         })
     );
+
+    restoreMessages(socket, channel);
+}
+
+async function restoreMessages(socket, channel) {
+    let data = await lrange(channel, 0, config.message_to_keep);
+    console.log("D", data);
+    data.forEach(d => {
+        socket.send(d);
+    });
 }
 
 async function getUsernameFromId(userId) {

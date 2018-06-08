@@ -13,7 +13,7 @@ const config = {
     github: {
         secret: process.env.OAUTH_SECRET || ''
     },
-    message_to_keep: 10,
+    message_to_keep: 100,
     secret: process.env.SECRET || 'AZERTYUI'
 };
 
