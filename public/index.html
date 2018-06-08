@@ -11,7 +11,7 @@
     <div id="live-chat" class="row">
 
         <header class="clearfix">
-            <h4>CHANNEL NAME</h4>
+            <h4 id="channel_name"></h4>
             <span class="chat-message-counter">3</span>
         </header>
 
@@ -19,34 +19,28 @@
 
             <div class="chat-history">
 
-                <div class="chat-message clearfix">
+                <div class="chat-message clearfix hidden" id="message_template">
 
-                    <img src="http://lorempixum.com/32/32/people" alt="" width="32" height="32">
+                    <img src="" alt="" width="32" height="32" class="avatar">
 
                     <div class="chat-message-content clearfix">
 
-                        <span class="chat-time">13:35</span>
+                        <span class="chat-time"></span>
 
-                        <h5>John Doe</h5>
+                        <h5 class="name"></h5>
 
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, explicabo quasi ratione odio dolorum harum.</p>
+                        <p class="message"></p>
 
                     </div> <!-- end chat-message-content -->
 
                 </div> <!-- end chat-message -->
 
-                <hr>
-
             </div> <!-- end chat-history -->
 
-            <p class="chat-feedback">Your partner is typing…</p>
+            <p class="chat-feedback"></p>
 
-            <form action="#" method="post">
-
-                <fieldset>
-
-                    <input type="text" placeholder="Type your message…" autofocus>
-                    <button type="submit">Send</button>
+                    <input type="text" placeholder="Type your message…" autofocus id="message_input">
+                    <button id="send_message">Send</button>
                     <input type="hidden">
 
                 </fieldset>
@@ -84,6 +78,11 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous">
+      </script>
+    <script src="public/js/app.js"></script>
 </body>
 </html>

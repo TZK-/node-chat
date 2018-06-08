@@ -1,6 +1,6 @@
 const path = require("path");
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const uuidv4 = require("uuid/v4");
 
@@ -8,7 +8,7 @@ const config = require("./config");
 const app = express();
 
 app.use('/public', express.static(config.express.public_path));
-app.use(bodyParser());
+// app.use(bodyParser());
 app.use(cookieParser());
 
 app.get('/login', (req, res) => {
@@ -21,7 +21,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
     const { login } = req.query;
-
+    res.cookie('login', login);
 
     return res.redirect('/');
 });
