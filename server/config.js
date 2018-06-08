@@ -14,7 +14,7 @@ const config = {
         secret: process.env.OAUTH_SECRET || ''
     },
     message_to_keep: 10,
-    secret: process.env.SECRET
+    secret: process.env.SECRET || 'AZERTYUI'
 };
 
 module.exports = config;
