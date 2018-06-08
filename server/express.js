@@ -18,6 +18,14 @@ app.use(session({ secret: config.secret }));
 app.use(cookieParser());
 app.use(bodyParser());
 
+app.use('/', (req, res, next) => {
+    if (req.originalUrl != '/login' && !req.session.user_id) {
+        return res.redirect('/login');
+    }
+
+    return next();
+});
+
 app.get("/login", (req, res) => {
     res.sendFile(
         path.join(config.express.public_path, "login.html"),
@@ -33,8 +41,8 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
     const { username } = req.body;
 
-    req.session.id = uuidv4();
-    set('client_' + req.session.id, username);
+    req.session.user_id = uuidv4();
+    set('client_' + req.session.user_id, username);
 
     return res.redirect("/");
 });
@@ -44,7 +52,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/:channel", (req, res, next) => {
-    res.render("index.ejs", {user_id: req.session.id});
+    res.render("index.ejs", {user_id: req.session.user_id});
 });
 
 module.exports = app;

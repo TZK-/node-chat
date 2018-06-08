@@ -96,14 +96,18 @@ async function unsubscribeFromAllChannel(socket) {
 }
 
 async function broadcast(channel, data) {
-    data.username = await getUsernameFromId(data.user_id);
-    redisPublisher.publish(channel, data);
+    let json = JSON.parse(data);
+
+    json.payload.username = await getUsernameFromId(json.user_id);
+
+    const stringJson = JSON.stringify(json);
+    redisPublisher.publish(channel, stringJson);
 
     while ((await llen(channel)) >= config.message_to_keep) {
         await rpop(channel);
     }
 
-    await lpush(channel, data);
+    await lpush(channel, stringJson);
 }
 
 function start() {
