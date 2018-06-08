@@ -39,24 +39,23 @@ async function subscribeToChannel(socket, channel, userId) {
     const channelName = "channel_" + channel;
 
     // TODO: return null all the time. Why The fuck ?
-    const users = JSON.parse(await get(channelName));
+    const users = JSON.parse(await get(channelName) || "[]");
 
-    if (!users.find(id => id == userId)) {
-        users.push(userId);
-        await set(channelName, JSON.stringify(users));
-        const username = getUsernameFromId(userId);
+    users.push(userId);
+    await set(channelName, JSON.stringify(users));
+    const username = await getUsernameFromId(userId);
 
-        broadcast(
-            channel,
-            JSON.stringify({
-                channel: channel,
-                type: "connected",
-                payload: {
-                    username: username
-                }
-            })
-        );
-    }
+    broadcast(
+        channel,
+        JSON.stringify({
+            channel: channel,
+            type: "connected",
+            payload: {
+                username: username
+            },
+            user_id: userId
+        })
+    );
 }
 
 async function getUsernameFromId(userId) {
@@ -97,7 +96,7 @@ async function unsubscribeFromAllChannel(socket) {
 }
 
 async function broadcast(channel, data) {
-    data.username = getUsernameFromId(data.user_id);
+    data.username = await getUsernameFromId(data.user_id);
     redisPublisher.publish(channel, data);
 
     while ((await llen(channel)) >= config.message_to_keep) {
