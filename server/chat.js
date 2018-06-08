@@ -120,7 +120,6 @@ function start() {
 
     redisSubscriber.on("message", (channel, data) => {
         const socketSubscribed = socketsPerChannels.get(channel) || new Set();
-        console.log("REDIS DATA:", data);
         socketSubscribed.forEach(client => {
             client.send(data);
         });

@@ -45,7 +45,6 @@ websocket.addEventListener("message", event => {
 
     if (message.channel != CURRENT_CHANNEL) {
         throw new Error("User not allowed to send message in this channel");
-        return;
     }
 
 
