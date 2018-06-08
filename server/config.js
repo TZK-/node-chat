@@ -3,7 +3,8 @@ const path = require('path');
 const config = {
     redis: {
         host: process.env.REDIS_HOST || '127.0.0.1',
-        port: process.env.REDIS_PORT || 6379
+        port: process.env.REDIS_PORT || 6379,
+        password: process.env.REDIS_PASSWORD || null
     },
     express: {
         public_path: path.join(__dirname, "../public"),
@@ -13,7 +14,7 @@ const config = {
         secret: process.env.OAUTH_SECRET || ''
     },
     message_to_keep: 10,
-    secret: 'AZERTHKLANDMKUO17TOL38UH'
+    secret: process.env.SECRET
 };
 
 module.exports = config;
