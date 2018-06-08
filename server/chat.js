@@ -18,7 +18,7 @@ const socketsPerChannels = new Map();
 /* WeakMap<WebSocket, Set<string> */
 const channelsPerSocket = new WeakMap();
 
-function subscribeToChannel(socket, channel) {
+function subscribeToChannel(socket, channel, username) {
     let socketSubscribed = socketsPerChannels.get(channel) || new Set();
     let channelSubscribed = channelsPerSocket.get(socket) || new Set();
 
@@ -92,7 +92,7 @@ function start() {
             console.log(message);
             switch (message.type) {
                 case "subscribe":
-                    subscribeToChannel(ws, message.channel);
+                    subscribeToChannel(ws, message.channel, message.username);
                     break;
                 default:
                     broadcast(message.channel, data);

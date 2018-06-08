@@ -10,7 +10,7 @@ const $messageTemplate = $("#message_template");
 const $chatFeedback = $(".chat-feedback");
 const $messageInput = $("#message_input");
 $("#channel_name").text(CURRENT_CHANNEL);
-
+document.cookie = "username=John Doe";
 const delay = (function() {
     let timer = 0;
     return function(callback, ms) {
@@ -35,7 +35,7 @@ $("#send_message").on("click", e => {
 });
 
 websocket.addEventListener("open", () => {
-    sendMessage("subscribe", { username: "USERNAME" });
+    sendMessage("subscribe");
 });
 
 websocket.addEventListener("message", event => {
@@ -45,6 +45,8 @@ websocket.addEventListener("message", event => {
         throw new Error("User not allowed to send message in this channel");
         return;
     }
+
+    console.log("Received", message);
 
     switch (message.type) {
         case "message":
@@ -62,12 +64,17 @@ websocket.addEventListener("message", event => {
         case "typing":
             $chatFeedback.text("Someone is writting");
             break;
+        case "connected":
+            console.log('User connected ' + message.payload.username);
+            break;
         default:
+        console.log("Default", message);
             break;
     }
 });
 
 function sendMessage(type, payload) {
-    const message = { type, payload, channel: CURRENT_CHANNEL };
+    const message = { type, payload, channel: CURRENT_CHANNEL, username: 'LALALIUHJ' };
+    console.log('Send', message);
     websocket.send(JSON.stringify(message));
 }
