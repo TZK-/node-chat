@@ -49,7 +49,9 @@ input {
     margin: 0;
     width: 100%;
 }
-
+.row{
+    display: inline-block;
+}
 p { margin: 0; }
 
 .clearfix { *zoom: 1; } /* For IE 6/7 */
@@ -64,7 +66,7 @@ p { margin: 0; }
 #live-chat {
     bottom: 0;
     font-size: 12px;
-    height: 100%;
+    height: 0px;
     margin: 40px 40px 40px 40px;
 }
 
@@ -103,8 +105,45 @@ p { margin: 0; }
     border-radius: 3px;
     padding: 8px;
     outline: none;
-    width: 234px;
 }
+/* ---------- LIVE-users ---------- */
+/* ---------- LIVE-users ---------- */
+#liv-users {
+    bottom: 0;
+    font-size: 12px;
+    height: 0px;
+    margin: 0px 100px 40px 40px;
+}
+
+#liv-users header {
+    background: #293239;
+    border-radius: 5px 5px 0 0;
+    color: #fff;
+    cursor: pointer;
+    padding: 16px 24px;
+}
+
+#liv-users h4:before {
+    background: #1a8a34;
+    border-radius: 50%;
+    content: "";
+    height: 8px;
+    width: 8px;
+}
+
+#live-users h4 {
+    font-size: 12px;
+}
+
+#live-users h5 {
+    font-size: 10px;
+}
+
+
+
+/* ---------- LIVE-users ---------- */
+/* ---------- LIVE-users ---------- */
+
 
 .chat-message-counter {
     background: #e62727;
@@ -168,4 +207,18 @@ p { margin: 0; }
 .chat-feedback {
     font-style: italic;
     margin: 0 0 0 80px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
 }
