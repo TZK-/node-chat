@@ -31,8 +31,6 @@ function subscribeToChannel(socket, channel) {
     if (socketSubscribed.size === 1) {
         redisSubscriber.subscribe(channel);
     }
-
-    //reloadCanvas(socket, channel);
 }
 
 function unsubscribeFromChannel(socket, channel) {
@@ -61,7 +59,7 @@ function unsubscribeFromAllChannel(socket) {
 async function broadcast(channel, data) {
     redisPublisher.publish(channel, data);
 
-    while ((await llen(channel)) >= config.whiteboard.points_to_keep) {
+    while ((await llen(channel)) >= config.message_to_keep) {
         await rpop(channel);
     }
 
@@ -71,15 +69,16 @@ async function broadcast(channel, data) {
 function start() {
     const server = http.createServer(app);
     const wss = new WebSocket.Server({ server });
-    app.listen(config.express.port, () => {
+
+    server.listen(config.express.port, () => {
         console.log("Server running on port " + config.express.port);
     });
 
-    redisSubscriber.on("message", (channel, message) => {
+    redisSubscriber.on("message", (channel, data) => {
         const socketSubscribed = socketsPerChannels.get(channel) || new Set();
 
         socketSubscribed.forEach(client => {
-            client.send(message);
+            client.send(data);
         });
     });
 
@@ -90,10 +89,10 @@ function start() {
 
         ws.on("message", data => {
             const message = JSON.parse(data.toString());
-
+            console.log(message);
             switch (message.type) {
                 case "subscribe":
-                    subscribe(ws, message.channel);
+                    subscribeToChannel(ws, message.channel);
                     break;
                 default:
                     broadcast(message.channel, data);

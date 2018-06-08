@@ -11,7 +11,8 @@ const config = {
     },
     github: {
         secret: process.env.OAUTH_SECRET || ''
-    }
+    },
+    message_to_keep: 10
 };
 
 module.exports = config;
