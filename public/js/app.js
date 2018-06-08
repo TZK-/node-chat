@@ -7,10 +7,11 @@ const websocket = new WebSocket(
 
 const $chat = $(".chat-history");
 const $messageTemplate = $("#message_template");
+const $connectedUserTemplate = $("#connected_user_template");
 const $chatFeedback = $(".chat-feedback");
 const $messageInput = $("#message_input");
 $("#channel_name").text(CURRENT_CHANNEL);
-document.cookie = "username=John Doe";
+
 const delay = (function() {
     let timer = 0;
     return function(callback, ms) {
@@ -65,16 +66,21 @@ websocket.addEventListener("message", event => {
             $chatFeedback.text("Someone is writting");
             break;
         case "connected":
-            console.log('User connected ' + message.payload.username);
+            const {username} = message.payload;
+            const $user = $connectedUserTemplate.clone().find('.chat-message');
+            $user.text(username);
+            $user.attr('data-username', username);
+
+            $connectedUserTemplate.append($user);
+            $connectedUserTemplate.append("<hr>");
             break;
         default:
-        console.log("Default", message);
             break;
     }
 });
 
 function sendMessage(type, payload) {
-    const message = { type, payload, channel: CURRENT_CHANNEL, username: 'LALALIUHJ' };
-    console.log('Send', message);
+    const message = { type, payload, channel: CURRENT_CHANNEL, user_id: window.user_id };
+    console.log('Sent', message);
     websocket.send(JSON.stringify(message));
 }

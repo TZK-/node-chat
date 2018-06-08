@@ -11,6 +11,9 @@ const llen = promisify(redisPublisher.llen).bind(redisPublisher);
 const rpop = promisify(redisPublisher.rpop).bind(redisPublisher);
 const lpush = promisify(redisPublisher.lpush).bind(redisPublisher);
 const lrange = promisify(redisPublisher.lrange).bind(redisPublisher);
+const set = promisify(redisPublisher.set).bind(redisPublisher);
+const get = promisify(redisPublisher.get).bind(redisPublisher);
+const del = promisify(redisPublisher.del).bind(redisPublisher);
 
 /* Map<string, Set<WebSocket>> */
 const socketsPerChannels = new Map();
@@ -18,7 +21,7 @@ const socketsPerChannels = new Map();
 /* WeakMap<WebSocket, Set<string> */
 const channelsPerSocket = new WeakMap();
 
-function subscribeToChannel(socket, channel, username) {
+async function subscribeToChannel(socket, channel, userId) {
     let socketSubscribed = socketsPerChannels.get(channel) || new Set();
     let channelSubscribed = channelsPerSocket.get(socket) || new Set();
 
@@ -31,9 +34,25 @@ function subscribeToChannel(socket, channel, username) {
     if (socketSubscribed.size === 1) {
         redisSubscriber.subscribe(channel);
     }
+
+    // Add userId in redis channel
+    const channelName = 'channel_' + channel;
+    const users = JSON.parse(await get(channelName) || "[]");
+    users.push(userId);
+
+    await set(channelName, JSON.stringify(users));
+    const username = await get('client_' + userId);
+
+    broadcast(channel, JSON.stringify({
+        channel: channel,
+        type: 'connected',
+        payload: {
+            username: username
+        }
+    }));
 }
 
-function unsubscribeFromChannel(socket, channel) {
+async function unsubscribeFromChannel(socket, channel, userId) {
     let socketSubscribed = socketsPerChannels.get(channel) || new Set();
     let channelSubscribed = channelsPerSocket.get(socket) || new Set();
 
@@ -46,13 +65,23 @@ function unsubscribeFromChannel(socket, channel) {
     if (socketSubscribed.size === 0) {
         redisSubscriber.unsubscribe(channel);
     }
+
+    if (userId !== undefined) {
+        // Remove userId in redis channel
+        const channelName = 'channel_' + channel;
+        const users = JSON.parseJSON(await get(channelName));
+        const usersWithoutUnsubscriber = users.filter(user => user != userId);
+
+        await set(channelName, JSON.stringify(usersWithoutUnsubscriber));
+    }
 }
 
-function unsubscribeFromAllChannel(socket) {
+async function unsubscribeFromAllChannel(socket) {
     const channelSubscribed = channelsPerSocket.get(socket) || new Set();
 
-    channelSubscribed.forEach(channel => {
+    channelSubscribed.forEach(async channel => {
         unsubscribeFromChannel(socket, channel);
+        await del('channel_' + channel);
     });
 }
 
@@ -76,7 +105,7 @@ function start() {
 
     redisSubscriber.on("message", (channel, data) => {
         const socketSubscribed = socketsPerChannels.get(channel) || new Set();
-
+        console.log("REDIS DATA:", data);
         socketSubscribed.forEach(client => {
             client.send(data);
         });
@@ -89,10 +118,10 @@ function start() {
 
         ws.on("message", data => {
             const message = JSON.parse(data.toString());
-            console.log(message);
+
             switch (message.type) {
                 case "subscribe":
-                    subscribeToChannel(ws, message.channel, message.username);
+                    subscribeToChannel(ws, message.channel, message.user_id);
                     break;
                 default:
                     broadcast(message.channel, data);

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Github Chat</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+    <link rel="stylesheet" href="../public/css/reset.css">
+    <link rel="stylesheet" href="../public/css/app.css">
+</head>
+<body>
+    <div id="live-chat" class="row">
+
+        <header class="clearfix">
+            <h4 id="channel_name"></h4>
+            <span class="chat-message-counter">3</span>
+        </header>
+
+        <div class="chat">
+
+            <div class="chat-history">
+
+                <div class="chat-message clearfix hidden" id="message_template">
+
+                    <img src="" alt="" width="32" height="32" class="avatar">
+
+                    <div class="chat-message-content clearfix">
+
+                        <span class="chat-time"></span>
+
+                        <h5 class="name"></h5>
+
+                        <p class="message"></p>
+
+                    </div> <!-- end chat-message-content -->
+
+                </div> <!-- end chat-message -->
+
+            </div> <!-- end chat-history -->
+
+            <p class="chat-feedback"></p>
+
+            <fieldset>
+                <input type="text" placeholder="Type your message…" autofocus id="message_input">
+                <button id="send_message">Send</button>
+                <input type="hidden">
+            </fieldset>
+
+        </div> <!-- end chat -->
+
+    </div> <!-- end live-chat -->
+    <div id="liv-users" class="row">
+
+        <header class="clearfix">
+            <h4>USERS CONNECTED</h4>
+            <span class="chat-message-counter">3</span>
+        </header>
+
+        <div class="chat">
+            <div class="chat-history" id="connected_user_template">
+                <div class="chat-message clearfix">
+                    ibhlkj;
+                </div> <!-- end chat-message -->
+                <hr>
+            </div> <!-- end chat-history -->
+        </div> <!-- end chat -->
+
+    </div> <!-- end live-chat -->
+
+    <script>
+        window.user_id = "<%= user_id %>";
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous">
+      </script>
+    <script src="public/js/app.js"></script>
+</body>
+</html>
